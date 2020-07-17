@@ -77,10 +77,9 @@ class FastQreader :
 class FastQ :
 	'''FASTQ document object'''
 
-	def __init__(self, qScore, options):
+	def __init__(self, qScore):
 		'''initialize to hold a string of qscore and the file type'''
 		self.qScore = qScore
-		self.options = options
 
 		#dictionaries for conversion 
 		self.p33top64 = {chr(q):chr(q+31) for q in range(33, 73 + 1)}
@@ -88,51 +87,6 @@ class FastQ :
 		self.Soltop64 = {';':'A', '<':'A', '=':'B', '>':'B', '?':'C', '@':'C', 'A':'D', 'B':'D',
 						 'C':'E', 'D':'E', 'E':'F', 'F':'G', 'G':'H', 'H':'I', 'I':'J', 'J':'J'
 		 				}
-	def convert33to64(self):
-		scores = ''
-		for q in self.qScore:
-			scores+=self.p33top64.get(q)
-		print(scores)
-
-	def convert64to33(self):
-		scores = ''
-		for q in self.qScore:
-			scores+=self.p64top33.get(q)
-		print(scores)
-
-	def convertSoltop64(self):
-		scores = ''
-		for q in self.qScore:
-				if ord(q) < 74:
-					q = self.Soltop64.get(q)
-				scores += q
-		print(scores)
-
-	def convertSoltop33(self):
-		scores = ''
-		for q in self.qScore:
-			if ord(q) < 74:
-				q = self.Soltop64.get(q)
-			q = self.p64top33.get(q)
-			scores += q
-		print(scores)
-
-	def convert64Bto64(self):
-		scores = ''
-		for q in self.qScore:
-			if q == 'B':
-				q = '@'
-			scores+=q
-		print(scores)
-
-	def convert64Bto33(self):
-		scores = ''
-		for q in self.qScore:
-			if q == 'B':
-				q = '@'
-			q = self.p64top33(q)
-			scores+=q
-		print(scores)
 
 
 ########################################################################
@@ -189,8 +143,54 @@ def convert(info,func):
 		print(h)
 		print(s)
 		print(qh)
-		score = FastQ(qs, options)
-		score.func()
+		score = FastQ(qs)
+		func(score)
+
+def convert33to64(self):
+	scores = ''
+	for q in self.qScore:
+		scores+=self.p33top64.get(q)
+	print(scores)
+
+def convert64to33(self):
+	scores = ''
+	for q in self.qScore:
+		scores+=self.p64top33.get(q)
+	print(scores)
+
+def convertSoltop64(self):
+	scores = ''
+	for q in self.qScore:
+			if ord(q) < 74:
+				q = self.Soltop64.get(q)
+			scores += q
+	print(scores)
+
+def convertSoltop33(self):
+	scores = ''
+	for q in self.qScore:
+		if ord(q) < 74:
+			q = self.Soltop64.get(q)
+		q = self.p64top33.get(q)
+		scores += q
+	print(scores)
+
+def convert64Bto64(self):
+	scores = ''
+	for q in self.qScore:
+		if q == 'B':
+			q = '@'
+		scores+=q
+	print(scores)
+
+def convert64Bto33(self):
+	scores = ''
+	for q in self.qScore:
+		if q == 'B':
+			q = '@'
+		q = self.p64top33(q)
+		scores+=q
+	print(scores)
 ########################################################################
 #main
 ########################################################################
@@ -221,7 +221,7 @@ def main(inCL=None):
 	elif options.P33out:
 		if options.P64in:
 			convert(info,convert64to33)
-		elif option.P64SOLin:
+		elif options.P64SOLin:
 			convert(info,convertSoltop33)
 		elif options.P64Bin:
 			convert(info,convert64Bto33)
@@ -235,13 +235,6 @@ def main(inCL=None):
 
 if __name__ == "__main__":
 	main()
-
-
-
-
-
-
-
 
 
 
